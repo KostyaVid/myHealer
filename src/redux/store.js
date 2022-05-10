@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import focusSlice from './focusSlice';
 import GDCSlice from './GDCSlice';
+import iconBuffSlice from './iconBuffSlice';
 import spellCastSlice from './spellCastSlice';
 import unitReducer from './unitSlice';
 
@@ -10,5 +11,6 @@ export default configureStore({
     focus: focusSlice,
     gdc: GDCSlice,
     spellCast: spellCastSlice,
+    iconBuff: iconBuffSlice,
   },
 });
