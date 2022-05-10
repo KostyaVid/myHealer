@@ -1,23 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import HealthTable from './components/UI/HealthTable/HealthTable';
+import SpellCast from './components/UI/SpellCast/SpellCast';
+import SpellTable from './components/UI/SpellTable/SpellTable';
+import UnitFocusPlayer from './components/UI/UnitFocusPlayer/UnitFocusPlayer';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <HealthTable />
+      <UnitFocusPlayer />
+      <SpellCast />
+      <SpellTable />
     </div>
   );
 }

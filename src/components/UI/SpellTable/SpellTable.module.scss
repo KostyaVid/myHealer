@@ -1,0 +1,8 @@
+@import '../../../variables/variables';
+.spellTable{
+   display: flex;
+   flex-direction: row;
+   flex: 1 0 content;
+   position:absolute; 
+   transform: translate( calc(50vw - 50%), calc(100vh - 100% - 30px) );
+}

@@ -1,0 +1,9 @@
+@import '../../../variables/variables';
+
+.healthTable{
+   display: flex;
+   flex-direction: $flexDirectionHealthTable;
+   flex: 1 0 content;
+   position:absolute;
+   transform: translate(calc(50vw - 50%), calc(100vh - 100% - 30px - 100px) );
+}
