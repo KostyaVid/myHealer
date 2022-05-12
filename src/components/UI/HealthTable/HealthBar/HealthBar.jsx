@@ -4,18 +4,20 @@ import { setFocusPlayer } from '../../../../redux/focusSlice';
 import style from './HealthBar.module.scss';
 
 function HealthBar({ id }) {
-  const [name, currentHealth, maxHealth, buffs] = useSelector((state) => {
+  const [name, currentHealth, maxHealth, buffs, isLife] = useSelector((state) => {
     return [
       state.units.units[id].name,
       state.units.units[id].currentHealth,
       state.units.units[id].maxHealth,
       state.iconBuff.unit[id].icons,
+      state.units.units[id].isLife,
     ];
   });
   const dispatch = useDispatch();
 
   return (
     <div className={style.HealthBar} onClick={() => dispatch(setFocusPlayer(id))}>
+      {!isLife ? <div className={style.death}></div> : ''}
       <div
         className={style.currentHealth}
         style={{ width: `${(currentHealth / maxHealth) * 100 + '%'}` }}></div>

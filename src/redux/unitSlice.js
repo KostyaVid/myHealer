@@ -4,33 +4,83 @@ export const unitSlice = createSlice({
   name: 'units',
   initialState: {
     units: [
-      { id: 0, name: 'Player', maxHealth: 100, currentHealth: 100, coefficientArmor: 1 },
-      { id: 1, name: 'Tank', maxHealth: 200, currentHealth: 100, coefficientArmor: 0.6 },
-      { id: 2, name: 'MDD', maxHealth: 150, currentHealth: 100, coefficientArmor: 0.8 },
-      { id: 3, name: 'RDD', maxHealth: 120, currentHealth: 100, coefficientArmor: 1 },
-      { id: 4, name: 'RDDr', maxHealth: 120, currentHealth: 100, coefficientArmor: 1 },
+      {
+        id: 0,
+        name: 'Player',
+        maxHealth: 1000,
+        currentHealth: 100,
+        coefficientArmor: 1,
+        isLife: true,
+      },
+      {
+        id: 1,
+        name: 'Tank',
+        maxHealth: 2000,
+        currentHealth: 100,
+        coefficientArmor: 0.6,
+        isLife: true,
+      },
+      {
+        id: 2,
+        name: 'MDD',
+        maxHealth: 1500,
+        currentHealth: 100,
+        coefficientArmor: 0.8,
+        isLife: true,
+      },
+      {
+        id: 3,
+        name: 'RDD',
+        maxHealth: 1200,
+        currentHealth: 0,
+        coefficientArmor: 1,
+        isLife: false,
+      },
+      {
+        id: 4,
+        name: 'RDDr',
+        maxHealth: 1200,
+        currentHealth: 100,
+        coefficientArmor: 1,
+        isLife: true,
+      },
     ],
   },
   reducers: {
     setHeal: (state, action) => {
       //action: {id, heal}
-      state.units[action.payload.id].currentHealth += action.payload.heal;
-      Math.trunc(state.units[action.payload.id].currentHealth);
-      if (state.units[action.payload.id].currentHealth > state.units[action.payload.id].maxHealth) {
-        state.units[action.payload.id].currentHealth = state.units[action.payload.id].maxHealth;
+      if (state.units[action.payload.id].isLife) {
+        state.units[action.payload.id].currentHealth += action.payload.heal;
+        Math.trunc(state.units[action.payload.id].currentHealth);
+        if (
+          state.units[action.payload.id].currentHealth > state.units[action.payload.id].maxHealth
+        ) {
+          state.units[action.payload.id].currentHealth = state.units[action.payload.id].maxHealth;
+        }
       }
     },
 
     takeDamage: (state, action) => {
       //action: {id, damage}
-      state.units[action.payload.id].currentHealth =
-        state.units[action.payload.id].currentHealth -
-        action.payload.damage * state.units[action.payload.id].coefficientArmor;
+      if (state.units[action.payload.id].isLife) {
+        state.units[action.payload.id].currentHealth =
+          state.units[action.payload.id].currentHealth -
+          action.payload.damage * state.units[action.payload.id].coefficientArmor;
+        if (state.units[action.payload.id].currentHealth <= 0) {
+          state.units[action.payload.id].currentHealth = 0;
+          state.units[action.payload.id].isLife = false;
+        }
+      }
+    },
+
+    die: (state, action) => {
+      //action: {id, damage}
+      state.units[action.payload.id].isLife = false;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setHeal, takeDamage } = unitSlice.actions;
+export const { setHeal, takeDamage, die } = unitSlice.actions;
 
 export default unitSlice.reducer;

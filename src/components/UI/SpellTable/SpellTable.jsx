@@ -8,14 +8,14 @@ function SpellTable() {
       <SpellItem
         nameSpell="1"
         coolDown={2000}
-        valueHeal={10}
+        valueHeal={200}
         spellCasting={2000}
         address="./img/EaseHeal.png"
       />
       <SpellItem
         nameSpell="2"
         coolDown={3000}
-        valueHeal={5}
+        valueHeal={40}
         interval={1000}
         duration={8000}
         address="./img/bloom.png"
@@ -23,7 +23,7 @@ function SpellTable() {
       <SpellItem
         nameSpell="3"
         coolDown="8000"
-        valueHeal={2}
+        valueHeal={20}
         interval={1000}
         duration={8000}
         intervalArea={true}

@@ -100,6 +100,9 @@ function SpellItem({
   const focus = useSelector((state) => {
     return state.focus.focusPlayer;
   });
+  const isFocusLife = useSelector((state) => {
+    return state.units.units[focus].isLife;
+  });
   const GDC = useSelector((state) => {
     return state.gdc.isGDC;
   });
@@ -121,27 +124,29 @@ function SpellItem({
       className={[style.spellItem, GDC ? `${style.unActive}` : ''].join(' ')}
       style={{ backgroundImage: `url(${address})` }}
       onClick={() => {
-        //Обработка кулдаунов и вызовов событий
-        if (!isCoolDown) {
-          dispatch(syncCoolDown(nameSpell, coolDown));
-          if (!isSpellCasting) {
-            dispatch(startGDC());
-            if (spellCasting === 0) {
-              if (interval === 0) {
-                dispatch(setHeal({ id: focus, heal: valueHeal }));
-              } else {
-                if (intervalArea) {
-                  dispatch(intervalHealAll(valueHeal, duration, interval, address));
+        if (isFocusLife) {
+          //Обработка кулдаунов и вызовов событий
+          if (!isCoolDown) {
+            dispatch(syncCoolDown(nameSpell, coolDown));
+            if (!isSpellCasting) {
+              dispatch(startGDC());
+              if (spellCasting === 0) {
+                if (interval === 0) {
+                  dispatch(setHeal({ id: focus, heal: valueHeal }));
                 } else {
-                  if (!buffs.includes(address)) {
-                    dispatch(intervalHeal(focus, valueHeal, duration, interval, address));
+                  if (intervalArea) {
+                    dispatch(intervalHealAll(valueHeal, duration, interval, address));
+                  } else {
+                    if (!buffs.includes(address)) {
+                      dispatch(intervalHeal(focus, valueHeal, duration, interval, address));
+                    }
                   }
                 }
+              } else {
+                dispatch(castHeal(focus, valueHeal, spellCasting));
               }
-            } else {
-              dispatch(castHeal(focus, valueHeal, spellCasting));
+              dispatch(endGlobalCooldown());
             }
-            dispatch(endGlobalCooldown());
           }
         }
       }}
