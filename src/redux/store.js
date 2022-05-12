@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import coolDownSlice from './coolDownSlice';
 import focusSlice from './focusSlice';
 import GDCSlice from './GDCSlice';
 import iconBuffSlice from './iconBuffSlice';
@@ -12,5 +13,6 @@ export default configureStore({
     gdc: GDCSlice,
     spellCast: spellCastSlice,
     iconBuff: iconBuffSlice,
+    coolDown: coolDownSlice,
   },
 });

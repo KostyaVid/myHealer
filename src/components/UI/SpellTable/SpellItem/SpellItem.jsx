@@ -5,12 +5,22 @@ import { endGDC, startGDC } from '../../../../redux/GDCSlice';
 import style from './SpellItem.module.scss';
 import { setSpellCast } from '../../../../redux/spellCastSlice';
 import { deleteBuff, setBuff } from '../../../../redux/iconBuffSlice';
+import { endCoolDown, setCoolDown } from '../../../../redux/coolDownSlice';
 
 const endGlobalCooldown = () => {
   return async (dispatch) => {
     setTimeout(() => {
       dispatch(endGDC());
     }, 1000);
+  };
+};
+
+const syncCoolDown = (nameSpell, coolDown) => {
+  return async (dispatch) => {
+    dispatch(setCoolDown({ nameSpell: nameSpell }));
+    setTimeout(() => {
+      dispatch(endCoolDown({ nameSpell: nameSpell }));
+    }, coolDown);
   };
 };
 
@@ -61,7 +71,7 @@ function intervalHealAll(valueHeal, duration, interval, address) {
 
 /**
  * основной компонент ячейки заклинания
- * @component
+
  * @param {string} nameSpell- Имя заклинания
  * @param {number} coolDown - Кулдаун заклинания
  * @param {number} valueHeal- Объем хила за тик
@@ -70,7 +80,6 @@ function intervalHealAll(valueHeal, duration, interval, address) {
  * @param {number} interval- Интервал между тиками. Если его нет, то закл. непериодическое
  * @param {number} duration - продолжительность периодического закл. Необяз, если нет interval
  * @param {boolean} intervalArea - boolean. Всех или соло лечит
- * @returns {number}
  */
 
 function SpellItem({
@@ -83,6 +92,7 @@ function SpellItem({
   duration,
   intervalArea,
 }) {
+  coolDown = coolDown || 1000;
   interval = interval || 0;
   spellCasting = spellCasting || 0;
   intervalArea = intervalArea || false;
@@ -96,6 +106,14 @@ function SpellItem({
   const isSpellCasting = useSelector((state) => {
     return state.spellCast.isCast;
   });
+  const isCoolDown = useSelector((state) => {
+    return state.coolDown[nameSpell];
+  });
+
+  const buffs = useSelector((state) => {
+    return state.iconBuff.unit[focus].icons;
+  });
+
   const dispatch = useDispatch();
 
   return (
@@ -104,27 +122,36 @@ function SpellItem({
       style={{ backgroundImage: `url(${address})` }}
       onClick={() => {
         //Обработка кулдаунов и вызовов событий
-        if (!isSpellCasting) {
-          dispatch(startGDC());
-          if (spellCasting === 0) {
-            if (interval === 0) {
-              dispatch(setHeal({ id: focus, heal: valueHeal }));
-            } else {
-              if (intervalArea) {
-                dispatch(intervalHealAll(valueHeal, duration, interval, address));
+        if (!isCoolDown) {
+          dispatch(syncCoolDown(nameSpell, coolDown));
+          if (!isSpellCasting) {
+            dispatch(startGDC());
+            if (spellCasting === 0) {
+              if (interval === 0) {
+                dispatch(setHeal({ id: focus, heal: valueHeal }));
               } else {
-                dispatch(intervalHeal(focus, valueHeal, duration, interval, address));
+                if (intervalArea) {
+                  dispatch(intervalHealAll(valueHeal, duration, interval, address));
+                } else {
+                  if (!buffs.includes(address)) {
+                    dispatch(intervalHeal(focus, valueHeal, duration, interval, address));
+                  }
+                }
               }
+            } else {
+              dispatch(castHeal(focus, valueHeal, spellCasting));
             }
-          } else {
-            dispatch(castHeal(focus, valueHeal, spellCasting));
+            dispatch(endGlobalCooldown());
           }
-          dispatch(endGlobalCooldown());
         }
       }}
       //конец обработки кулдаунов и событий
     >
-      <div className={style.currentCoolDown} style={{ animationDuration: `${coolDown}ms` }}></div>
+      {isCoolDown ? (
+        <div className={style.currentCoolDown} style={{ animationDuration: `${coolDown}ms` }}></div>
+      ) : (
+        ''
+      )}
 
       {GDC ? (
         <div className={style.currentCoolDown} style={{ animationDuration: `1000ms` }}></div>
