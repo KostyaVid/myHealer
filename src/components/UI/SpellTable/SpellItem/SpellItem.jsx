@@ -59,6 +59,20 @@ function intervalHealAll(valueHeal, duration, interval, address) {
   };
 }
 
+/**
+ * основной компонент ячейки заклинания
+ * @component
+ * @param {string} nameSpell- Имя заклинания
+ * @param {number} coolDown - Кулдаун заклинания
+ * @param {number} valueHeal- Объем хила за тик
+ * @param {number} spellCasting - Время каста
+ * @param {number} address - URL изображения заклинания
+ * @param {number} interval- Интервал между тиками. Если его нет, то закл. непериодическое
+ * @param {number} duration - продолжительность периодического закл. Необяз, если нет interval
+ * @param {boolean} intervalArea - boolean. Всех или соло лечит
+ * @returns {number}
+ */
+
 function SpellItem({
   nameSpell,
   coolDown,
@@ -89,6 +103,7 @@ function SpellItem({
       className={[style.spellItem, GDC ? `${style.unActive}` : ''].join(' ')}
       style={{ backgroundImage: `url(${address})` }}
       onClick={() => {
+        //Обработка кулдаунов и вызовов событий
         if (!isSpellCasting) {
           dispatch(startGDC());
           if (spellCasting === 0) {
@@ -106,7 +121,9 @@ function SpellItem({
           }
           dispatch(endGlobalCooldown());
         }
-      }}>
+      }}
+      //конец обработки кулдаунов и событий
+    >
       <div className={style.currentCoolDown} style={{ animationDuration: `${coolDown}ms` }}></div>
 
       {GDC ? (

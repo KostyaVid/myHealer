@@ -15,6 +15,7 @@ export const unitSlice = createSlice({
     setHeal: (state, action) => {
       //action: {id, heal}
       state.units[action.payload.id].currentHealth += action.payload.heal;
+      Math.trunc(state.units[action.payload.id].currentHealth);
       if (state.units[action.payload.id].currentHealth > state.units[action.payload.id].maxHealth) {
         state.units[action.payload.id].currentHealth = state.units[action.payload.id].maxHealth;
       }

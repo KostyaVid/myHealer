@@ -14,12 +14,13 @@
 
 .currentHealth{
    background-color: $currentHealth;
-   width: 50%;
+   width: 100%;
    height: 100%;
    position: absolute;
    top: 0;
    left: 0;
    z-index: 2;
+   transition: width 0.2s ease;
 }
 
 .title{
