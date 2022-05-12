@@ -34,18 +34,36 @@ const castHeal = (focus, valueHeal, spellCasting) => {
   };
 };
 
-function intervalHeal(focus, valueHeal, duration, interval, address) {
+function intervalHeal(focus, valueHeal, duration, interval, address, isHeal) {
   return async (dispatch) => {
-    dispatch(setBuff({ id: focus, address: address }));
+    if (!isHeal.heal) {
+      isHeal.heal = true;
+      dispatch(setBuff({ id: focus, address: address }));
 
-    const timerId = setInterval(() => {
-      dispatch(setHeal({ id: focus, heal: valueHeal }));
-    }, interval);
+      isHeal.timerId = setInterval(() => {
+        dispatch(setHeal({ id: focus, heal: valueHeal }));
+      }, interval);
+      console.log(isHeal);
+      setTimeout(() => {
+        clearInterval(isHeal.timerId);
+        dispatch(deleteBuff({ id: focus, address: address }));
+        isHeal.heal = false;
+      }, duration);
+    } else {
+      clearInterval(isHeal.timerId);
+      console.log(isHeal);
+      isHeal.heal = true;
 
-    setTimeout(() => {
-      clearInterval(timerId);
-      dispatch(deleteBuff({ id: focus, address: address }));
-    }, duration);
+      isHeal.timerId = setInterval(() => {
+        dispatch(setHeal({ id: focus, heal: valueHeal }));
+      }, interval);
+
+      setTimeout(() => {
+        clearInterval(isHeal.timerId);
+        dispatch(deleteBuff({ id: focus, address: address }));
+        isHeal.heal = false;
+      }, duration);
+    }
   };
 }
 
@@ -113,9 +131,7 @@ function SpellItem({
     return state.coolDown[nameSpell];
   });
 
-  const buffs = useSelector((state) => {
-    return state.iconBuff.unit[focus].icons;
-  });
+  let isIntervalHeal = { heal: false, timerId: null };
 
   const dispatch = useDispatch();
 
@@ -126,27 +142,25 @@ function SpellItem({
       onClick={() => {
         if (isFocusLife) {
           //Обработка кулдаунов и вызовов событий
-          if (!isCoolDown) {
+          if (!(isSpellCasting || isCoolDown)) {
             dispatch(syncCoolDown(nameSpell, coolDown));
-            if (!isSpellCasting) {
-              dispatch(startGDC());
-              if (spellCasting === 0) {
-                if (interval === 0) {
-                  dispatch(setHeal({ id: focus, heal: valueHeal }));
-                } else {
-                  if (intervalArea) {
-                    dispatch(intervalHealAll(valueHeal, duration, interval, address));
-                  } else {
-                    if (!buffs.includes(address)) {
-                      dispatch(intervalHeal(focus, valueHeal, duration, interval, address));
-                    }
-                  }
-                }
+            dispatch(startGDC());
+            if (spellCasting === 0) {
+              if (interval === 0) {
+                dispatch(setHeal({ id: focus, heal: valueHeal }));
               } else {
-                dispatch(castHeal(focus, valueHeal, spellCasting));
+                if (intervalArea) {
+                  dispatch(intervalHealAll(valueHeal, duration, interval, address));
+                } else {
+                  dispatch(
+                    intervalHeal(focus, valueHeal, duration, interval, address, isIntervalHeal),
+                  );
+                }
               }
-              dispatch(endGlobalCooldown());
+            } else {
+              dispatch(castHeal(focus, valueHeal, spellCasting));
             }
+            dispatch(endGlobalCooldown());
           }
         }
       }}

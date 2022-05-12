@@ -28,7 +28,7 @@ function HealthBar({ id }) {
       </div>
 
       <div className={style.title}>
-        <div>{name + ' ' + currentHealth}</div>
+        <div>{[name, `${isLife ? currentHealth : 'Death'}`].join(' ')}</div>
       </div>
     </div>
   );

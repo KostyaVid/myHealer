@@ -1,0 +1,46 @@
+@import '../../../variables/variables';
+
+.HealthBar{
+   width: $widthHealthbar;
+   height: $heightHealthbar;
+   background-color: $colorHealthbar;
+   color: $colorTextHealthbar;
+   font-size: $fontSizeHealthbar;
+   border: $borderColorHealthbar 1px solid;
+   z-index: 1;
+   position: absolute;
+   transform: translate(calc(50vw + 70%), calc(100vh - 100% - 30px - 100px) );
+
+}
+
+.currentHealth{
+   background-color: rgb(126, 1, 1);
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 2;
+   transition: width 0.2s ease;
+}
+
+.death{
+   background-color: #000;
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 2;
+}
+
+.title{
+   position: absolute;
+   z-index: 3;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+   height: 100%;
+}
+
